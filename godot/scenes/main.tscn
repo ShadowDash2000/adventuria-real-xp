@@ -1,0 +1,57 @@
+[gd_scene load_steps=8 format=3 uid="uid://bv4304qjxp5r7"]
+
+[ext_resource type="PackedScene" uid="uid://drlfnly37ktno" path="res://scenes/player.tscn" id="1_o5qli"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_o5qli"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_o5qli"]
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_o5qli"]
+data = PackedVector3Array(1, 0, 1, -1, 0, 1, 1, 0, -1, -1, 0, 1, -1, 0, -1, 1, 0, -1)
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_o5qli"]
+ground_bottom_color = Color(0.28994057, 0.24805832, 0.20096698, 1)
+
+[sub_resource type="Sky" id="Sky_0wfyh"]
+sky_material = SubResource("ProceduralSkyMaterial_o5qli")
+
+[sub_resource type="Environment" id="Environment_o5qli"]
+background_mode = 2
+sky = SubResource("Sky_0wfyh")
+ambient_light_source = 3
+reflected_light_source = 2
+glow_enabled = true
+glow_bloom = 0.2
+fog_enabled = true
+fog_sun_scatter = 0.05
+fog_density = 0.1889
+adjustment_enabled = true
+adjustment_brightness = 0.88
+adjustment_saturation = 1.68
+
+[node name="Node3D" type="Node3D"]
+
+[node name="Player" parent="." instance=ExtResource("1_o5qli")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.3661153, 0)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.99999994, -1.06770145e-07, 1.0677015e-07, 0, 0.70710677, 0.7071067, -1.5099579e-07, 0.7071067, -0.70710677, 0, 0, 0)
+light_energy = 3.0
+shadow_enabled = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(2.130239, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7862307, -4.460142)
+mesh = SubResource("CylinderMesh_o5qli")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
+transform = Transform3D(7.0500574, 0, 0, 0, 1, 0, 0, 0, 6.6784554, 0, 0, 0)
+mesh = SubResource("PlaneMesh_o5qli")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(7.0500574, 0, 0, 0, 1, 0, 0, 0, 6.6784554, 0, 0, 0)
+shape = SubResource("ConcavePolygonShape3D_o5qli")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_o5qli")
