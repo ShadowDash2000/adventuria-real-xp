@@ -1,5 +1,7 @@
 use crate::movable::Movable3D;
+use crate::state_machine::state::State;
 use godot::builtin::{Vector3, real};
+use godot::classes::input::MouseMode;
 use godot::classes::{CharacterBody3D, INode3D, Input, InputEvent, Node3D};
 use godot::obj::{Base, Gd};
 use godot::prelude::*;
@@ -35,14 +37,24 @@ impl INode3D for PlayerMovement {
         }
     }
 
-    fn physics_process(&mut self, delta: f64) {
-        self.move_player(delta);
-    }
-
     fn ready(&mut self) {
         if self.movement_node.is_none() {
             godot_error!("MovementNode not found in Player node");
         }
+    }
+}
+
+#[godot_dyn]
+impl State for PlayerMovement {
+    fn enter(&self) {
+        let mut input = Input::singleton();
+        input.set_mouse_mode(MouseMode::CAPTURED);
+    }
+
+    fn exit(&self) {}
+
+    fn physics_process(&mut self, delta: f64) {
+        self.move_player(delta);
     }
 
     fn input(&mut self, event: Gd<InputEvent>) {

@@ -1,6 +1,6 @@
-mod player;
 mod movable;
-mod player_movement;
+mod player;
+mod state_machine;
 
 use godot::prelude::{ExtensionLibrary, gdextension};
 
