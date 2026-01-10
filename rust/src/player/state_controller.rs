@@ -2,8 +2,8 @@ use godot::classes::{INode, Node};
 use godot::obj::{Base, WithUserSignals};
 use godot::register::{Export, GodotClass, GodotConvert, Var, godot_api};
 
-#[derive(GodotConvert, Var, Export, Default, Copy, Clone, Debug, PartialEq, Eq)]
-#[godot(via = i64)]
+#[derive(GodotConvert, Var, Export, Default, Copy, Clone, Debug, PartialEq)]
+#[godot(via = u8)]
 pub enum PlayerStates {
     #[default]
     Movement,
