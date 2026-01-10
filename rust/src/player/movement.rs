@@ -1,11 +1,11 @@
 use crate::movable::Movable3D;
-use crate::state_machine::state::State;
+use crate::player::state::PlayerState;
+use crate::player::state_controller::{PlayerStates};
 use godot::builtin::{Vector3, real};
-use godot::classes::input::MouseMode;
 use godot::classes::{CharacterBody3D, INode3D, Input, InputEvent, Node3D};
 use godot::global::godot_error;
-use godot::obj::{Base, Gd, Singleton};
-use godot::register::{GodotClass, godot_api, godot_dyn};
+use godot::obj::{Base, Gd, Singleton, WithBaseField};
+use godot::register::{GodotClass, godot_api};
 
 #[derive(GodotClass)]
 #[class(base=Node3D)]
@@ -38,24 +38,17 @@ impl INode3D for PlayerMovement {
         }
     }
 
+    fn physics_process(&mut self, delta: f64) {
+        self.move_player(delta);
+    }
+
     fn ready(&mut self) {
         if self.movement_node.is_none() {
             godot_error!("MovementNode not found in Player node");
         }
-    }
-}
 
-#[godot_dyn]
-impl State for PlayerMovement {
-    fn enter(&self) {
-        let mut input = Input::singleton();
-        input.set_mouse_mode(MouseMode::CAPTURED);
-    }
-
-    fn exit(&self) {}
-
-    fn physics_process(&mut self, delta: f64) {
-        self.move_player(delta);
+        self.connect_to_player_state();
+        self.set_state_activity(false);
     }
 
     fn input(&mut self, event: Gd<InputEvent>) {
@@ -63,7 +56,19 @@ impl State for PlayerMovement {
     }
 }
 
+impl PlayerState for PlayerMovement {
+    fn on_player_state_changed(&mut self, new_state: PlayerStates) {
+        let is_active = new_state == PlayerStates::Movement;
+        self.set_state_activity(is_active);
+    }
+}
+
 impl PlayerMovement {
+    fn set_state_activity(&mut self, is_active: bool) {
+        self.base_mut().set_physics_process(is_active);
+        self.base_mut().set_process_input(is_active);
+    }
+
     fn move_player(&mut self, delta: f64) {
         let input = Input::singleton();
         let raw_input = input.get_vector("move_left", "move_right", "move_forward", "move_back");

@@ -2,9 +2,7 @@
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_u8vuu"]
 
-[node name="Player" type="Player"]
-jump_impulse = 1000.0
-gravity = -500.0
+[node name="Player" type="Player" groups=["player"]]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
@@ -15,10 +13,11 @@ unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1.0000001, 0, 0, 0, 1.0000001, 0, 1.5, 0)
 current = true
 
-[node name="PlayerState" type="PlayerState" parent="." node_paths=PackedStringArray("movement_state")]
-movement_state = NodePath("PlayerMovement")
+[node name="PlayerStateController" type="PlayerStateController" parent="."]
 
-[node name="PlayerMovement" type="PlayerMovement" parent="PlayerState" node_paths=PackedStringArray("movement_node")]
+[node name="PlayerMovement" type="PlayerMovement" parent="PlayerStateController" node_paths=PackedStringArray("movement_node")]
 speed = 3.0
 gravity = -30.0
 movement_node = NodePath("../..")
+
+[node name="PlayerCamera" type="PlayerCamera" parent="PlayerStateController"]
