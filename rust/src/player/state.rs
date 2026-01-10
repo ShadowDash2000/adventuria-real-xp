@@ -1,6 +1,7 @@
 use crate::state_machine::state::State;
-use godot::classes::InputEvent;
-use godot::prelude::*;
+use godot::classes::{INode, InputEvent, Node};
+use godot::obj::{Base, DynGd, Gd};
+use godot::register::{Export, GodotClass, GodotConvert, Var, godot_api};
 
 #[derive(GodotConvert, Var, Export, Default, Copy, Clone)]
 #[godot(via = i64)]

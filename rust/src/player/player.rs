@@ -1,7 +1,10 @@
+use godot::builtin::{Vector2, Vector3, real};
 use godot::classes::{
     Camera3D, CharacterBody3D, ICharacterBody3D, Input, InputEvent, InputEventMouseMotion,
 };
-use godot::prelude::*;
+use godot::global::godot_error;
+use godot::obj::{Base, Gd, Singleton, WithBaseField};
+use godot::register::{GodotClass, godot_api};
 
 #[derive(GodotClass)]
 #[class(base=CharacterBody3D)]

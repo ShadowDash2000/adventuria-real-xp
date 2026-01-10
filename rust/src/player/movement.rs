@@ -3,8 +3,9 @@ use crate::state_machine::state::State;
 use godot::builtin::{Vector3, real};
 use godot::classes::input::MouseMode;
 use godot::classes::{CharacterBody3D, INode3D, Input, InputEvent, Node3D};
-use godot::obj::{Base, Gd};
-use godot::prelude::*;
+use godot::global::godot_error;
+use godot::obj::{Base, Gd, Singleton};
+use godot::register::{GodotClass, godot_api, godot_dyn};
 
 #[derive(GodotClass)]
 #[class(base=Node3D)]
