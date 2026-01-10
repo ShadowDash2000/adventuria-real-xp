@@ -8,3 +8,4 @@ crate-type = ["cdylib"]
 
 [dependencies]
 godot = "0.4.5"
+godot_tokio = {git = "https://github.com/ShadowDash2000/godot_tokio"}
