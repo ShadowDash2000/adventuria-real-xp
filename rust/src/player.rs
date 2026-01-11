@@ -3,3 +3,4 @@ mod movement;
 mod state_controller;
 mod camera;
 mod state;
+mod interactor;

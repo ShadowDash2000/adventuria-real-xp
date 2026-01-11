@@ -1,6 +1,11 @@
-[gd_scene load_steps=7 format=3 uid="uid://bv4304qjxp5r7"]
+[gd_scene load_steps=9 format=3 uid="uid://bv4304qjxp5r7"]
 
 [ext_resource type="PackedScene" uid="uid://drlfnly37ktno" path="res://scenes/player.tscn" id="1_o5qli"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_o5qli"]
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_0wfyh"]
+data = PackedVector3Array(-0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, -0.5, -0.5)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_o5qli"]
 
@@ -36,6 +41,20 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.3661153, 0)
 transform = Transform3D(-0.99999994, -1.06770145e-07, 1.0677015e-07, 0, 0.70710677, 0.7071067, -1.5099579e-07, 0.7071067, -0.70710677, 0, 0, 0)
 light_energy = 3.0
 shadow_enabled = true
+
+[node name="InteractiveStaticBody3D" type="InteractiveStaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.13441)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="InteractiveStaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3247705, 0)
+mesh = SubResource("BoxMesh_o5qli")
+skeleton = NodePath("")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="InteractiveStaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3247705, 0)
+shape = SubResource("ConcavePolygonShape3D_0wfyh")
+
+[node name="TestInteraction" type="TestInteraction" parent="InteractiveStaticBody3D"]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="."]
 

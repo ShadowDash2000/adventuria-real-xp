@@ -1,5 +1,7 @@
 mod movable;
 mod player;
+mod interaction;
+mod test_interaction;
 
 use godot::classes::Engine;
 use godot::global::godot_warn;
