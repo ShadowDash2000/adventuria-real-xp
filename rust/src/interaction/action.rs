@@ -1,3 +1,3 @@
-pub trait Interaction {
+pub trait Action {
     fn interact(&mut self);
 }

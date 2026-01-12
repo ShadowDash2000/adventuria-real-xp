@@ -54,7 +54,7 @@ skeleton = NodePath("")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3247705, 0)
 shape = SubResource("ConcavePolygonShape3D_0wfyh")
 
-[node name="TestInteraction" type="TestInteraction" parent="InteractiveStaticBody3D"]
+[node name="TestAction" type="TestAction" parent="InteractiveStaticBody3D"]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="."]
 

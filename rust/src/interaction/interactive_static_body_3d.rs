@@ -1,4 +1,4 @@
-use crate::interaction::interaction::Interaction;
+use crate::interaction::action::Action;
 use crate::interaction::interactive::Interactive;
 use godot::classes::StaticBody3D;
 use godot::obj::{Base, WithBaseField};
@@ -14,7 +14,7 @@ struct InteractiveStaticBody3D {
 impl Interactive for InteractiveStaticBody3D {
     fn interact(&mut self) {
         for child in self.base().get_children().iter_shared() {
-            if let Ok(mut interaction) = child.try_dynify::<dyn Interaction>() {
+            if let Ok(mut interaction) = child.try_dynify::<dyn Action>() {
                 interaction.dyn_bind_mut().interact();
             }
         }

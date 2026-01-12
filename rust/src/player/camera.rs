@@ -1,42 +1,35 @@
 use crate::player::player::Player;
 use crate::player::state::PlayerState;
-use crate::player::state_controller::{PlayerStates};
+use crate::player::state_controller::PlayerStates;
 use godot::builtin::{Vector2, Vector3, real};
 use godot::classes::{Camera3D, INode, Input, InputEvent, InputEventMouseMotion, Node};
 use godot::global::godot_error;
-use godot::obj::{Base, Gd, Singleton, WithBaseField};
+use godot::obj::{Base, Gd, OnReady, Singleton, WithBaseField};
 use godot::register::{GodotClass, godot_api};
 
 #[derive(GodotClass)]
-#[class(base=Node)]
+#[class(init, base=Node)]
 struct PlayerCamera {
     base: Base<Node>,
 
     #[export]
+    #[init(val = 0.01)]
     mouse_sensitivity: real,
     #[export]
+    #[init(val = 1.0)]
     joy_sensitivity: real,
 
-    player: Option<Gd<Player>>,
-    camera3d: Option<Gd<Camera3D>>,
+    #[init(val = OnReady::manual())]
+    player: OnReady<Gd<Player>>,
+    #[init(node = "%Camera3D")]
+    camera3d: OnReady<Gd<Camera3D>>,
     pitch: f32,
+    #[init(val = Vector2::ZERO)]
     camera_rotation: Vector2,
 }
 
 #[godot_api]
 impl INode for PlayerCamera {
-    fn init(base: Base<Self::Base>) -> Self {
-        Self {
-            base,
-            mouse_sensitivity: 0.01,
-            joy_sensitivity: 1.0,
-            player: None,
-            camera3d: None,
-            pitch: 0.0,
-            camera_rotation: Vector2::ZERO,
-        }
-    }
-
     fn physics_process(&mut self, delta: f64) {
         self.handle_joypad_rotation(delta);
         self.rotate_camera();
@@ -47,26 +40,15 @@ impl INode for PlayerCamera {
             return;
         };
 
-        let Some(player) = tree
+        match tree
             .get_first_node_in_group("player")
             .and_then(|node| node.try_cast::<Player>().ok())
-        else {
-            godot_error!("Player node not found in group 'player' or wrong type");
-            return;
-        };
+        {
+            Some(player) => self.player.init(player),
+            None => godot_error!("Player node not found in group 'player' or wrong type"),
+        }
 
-        let Some(camera) = tree
-            .get_first_node_in_group("player")
-            .and_then(|node| node.try_get_node_as::<Camera3D>("Camera3D"))
-        else {
-            godot_error!("Camera3D not found at expected path");
-            return;
-        };
-
-        self.player = Some(player);
-
-        self.pitch = camera.get_rotation().x;
-        self.camera3d = Some(camera);
+        self.pitch = self.camera3d.get_rotation().x;
 
         self.connect_to_player_state();
         self.set_state_activity(false);
@@ -98,15 +80,12 @@ impl PlayerCamera {
             return;
         }
 
-        if let Some(mut player) = self.player.clone() {
-            player.rotate_y(-new_rotation.x);
-        }
+        self.player.clone().rotate_y(-new_rotation.x);
 
-        if let Some(mut camera) = self.camera3d.clone() {
-            self.pitch = (self.pitch - new_rotation.y).clamp(-1.5, 1.5);
-
-            camera.set_rotation(Vector3::new(self.pitch, 0.0, 0.0));
-        }
+        self.pitch = (self.pitch - new_rotation.y).clamp(-1.5, 1.5);
+        self.camera3d
+            .clone()
+            .set_rotation(Vector3::new(self.pitch, 0.0, 0.0));
     }
 
     fn handle_mouse_rotation(&mut self, event: Gd<InputEvent>) {
