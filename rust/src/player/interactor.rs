@@ -1,7 +1,7 @@
-use crate::interaction::interactive::Interactive;
+use crate::interaction::Interactive;
 use godot::classes::{IRayCast3D, InputEvent, RayCast3D};
 use godot::obj::{Base, Gd, WithBaseField};
-use godot::register::{GodotClass, godot_api};
+use godot::register::{godot_api, GodotClass};
 
 #[derive(GodotClass)]
 #[class(init, base=RayCast3D)]

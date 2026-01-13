@@ -1,6 +1,6 @@
 use godot::classes::{CharacterBody3D, ICharacterBody3D};
 use godot::obj::Base;
-use godot::register::{GodotClass, godot_api};
+use godot::register::{godot_api, GodotClass};
 
 #[derive(GodotClass)]
 #[class(base=CharacterBody3D)]

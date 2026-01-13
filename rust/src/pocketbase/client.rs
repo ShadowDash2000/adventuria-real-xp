@@ -1,6 +1,6 @@
 use godot::classes::{Engine, IObject, Object};
 use godot::obj::{Base, Gd, Singleton};
-use godot::register::{GodotClass, godot_api};
+use godot::register::{godot_api, GodotClass};
 use std::sync::Arc;
 use tokio::sync::RwLock;
 
@@ -34,7 +34,7 @@ impl PocketBase {
     }
 
     pub fn client()
-    -> Arc<RwLock<pocketbase_client::client::Client<pocketbase_client::client::NoAuth>>> {
+        -> Arc<RwLock<pocketbase_client::client::Client<pocketbase_client::client::NoAuth>>> {
         match Self::singleton() {
             Some(singleton) => Arc::clone(&singleton.bind().client),
             None => panic!("PocketBase singleton not initialized"),

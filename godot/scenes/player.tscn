@@ -16,11 +16,9 @@ current = true
 [node name="PlayerInteractor" type="PlayerInteractor" parent="Camera3D"]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
 
-[node name="PlayerStateController" type="PlayerStateController" parent="."]
-
-[node name="PlayerMovement" type="PlayerMovement" parent="PlayerStateController" node_paths=PackedStringArray("movement_node")]
+[node name="PlayerMovement" type="PlayerMovement" parent="." node_paths=PackedStringArray("movement_node")]
 speed = 3.0
 gravity = -30.0
-movement_node = NodePath("../..")
+movement_node = NodePath("..")
 
-[node name="PlayerCamera" type="PlayerCamera" parent="PlayerStateController"]
+[node name="PlayerCamera" type="PlayerCamera" parent="."]

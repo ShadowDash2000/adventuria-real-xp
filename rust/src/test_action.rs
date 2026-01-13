@@ -1,8 +1,8 @@
-use crate::interaction::action::Action;
+use crate::interaction::Action;
 use godot::classes::Node;
 use godot::global::godot_print;
 use godot::obj::Base;
-use godot::register::{GodotClass, godot_dyn};
+use godot::register::{godot_dyn, GodotClass};
 
 #[derive(GodotClass)]
 #[class(init, base=Node)]

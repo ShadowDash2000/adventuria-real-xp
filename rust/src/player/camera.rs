@@ -1,11 +1,10 @@
 use crate::player::player::Player;
-use crate::player::state::PlayerState;
-use crate::player::state_controller::PlayerStates;
-use godot::builtin::{Vector2, Vector3, real};
+use crate::states::{InputStateListener, InputStateManager, InputStates};
+use godot::builtin::{real, Vector2, Vector3};
 use godot::classes::{Camera3D, INode, Input, InputEvent, InputEventMouseMotion, Node};
 use godot::global::godot_error;
 use godot::obj::{Base, Gd, OnReady, Singleton, WithBaseField};
-use godot::register::{GodotClass, godot_api};
+use godot::register::{godot_api, GodotClass};
 
 #[derive(GodotClass)]
 #[class(init, base=Node)]
@@ -50,8 +49,9 @@ impl INode for PlayerCamera {
 
         self.pitch = self.camera3d.get_rotation().x;
 
-        self.connect_to_player_state();
-        self.set_state_activity(false);
+        self.connect_to_input_state();
+        let input_state = InputStateManager::singleton();
+        self.set_state_activity(input_state.bind().get_state());
     }
 
     fn input(&mut self, event: Gd<InputEvent>) {
@@ -59,15 +59,19 @@ impl INode for PlayerCamera {
     }
 }
 
-impl PlayerState for PlayerCamera {
-    fn on_player_state_changed(&mut self, new_state: PlayerStates) {
-        let is_active = new_state == PlayerStates::Movement;
-        self.set_state_activity(is_active);
+impl InputStateListener for PlayerCamera {
+    fn on_input_state_changed(&mut self, new_state: InputStates) {
+        self.set_state_activity(new_state);
     }
 }
 
 impl PlayerCamera {
-    fn set_state_activity(&mut self, is_active: bool) {
+    fn set_state_activity(&mut self, state: InputStates) {
+        let is_active = state == InputStates::Movement;
+        self.set_events_activity(is_active);
+    }
+
+    fn set_events_activity(&mut self, is_active: bool) {
         self.base_mut().set_physics_process(is_active);
         self.base_mut().set_process_input(is_active);
     }

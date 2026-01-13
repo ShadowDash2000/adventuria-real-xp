@@ -1,8 +1,7 @@
-use crate::interaction::action::Action;
-use crate::interaction::interactive::Interactive;
+use crate::interaction::{Action, Interactive};
 use godot::classes::StaticBody3D;
 use godot::obj::{Base, WithBaseField};
-use godot::register::{GodotClass, godot_dyn};
+use godot::register::{godot_dyn, GodotClass};
 
 #[derive(GodotClass)]
 #[class(init, base=StaticBody3D)]

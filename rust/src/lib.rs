@@ -2,16 +2,18 @@ mod auth_action;
 mod create_node;
 mod interaction;
 mod movable;
-mod player;
 mod pocketbase;
+mod states;
 mod test_action;
+mod player;
 
-use crate::pocketbase::client::PocketBase;
+use crate::pocketbase::PocketBase;
+use crate::states::InputStateManager;
 use godot::classes::Engine;
 use godot::global::godot_warn;
 use godot::init::InitLevel;
 use godot::obj::{NewAlloc, Singleton};
-use godot::prelude::{ExtensionLibrary, gdextension};
+use godot::prelude::{gdextension, ExtensionLibrary};
 use godot_tokio::AsyncRuntime;
 
 struct RustExtension;
@@ -24,6 +26,10 @@ unsafe impl ExtensionLibrary for RustExtension {
                 let mut engine = Engine::singleton();
                 engine.register_singleton(AsyncRuntime::SINGLETON, &AsyncRuntime::new_alloc());
                 engine.register_singleton(PocketBase::SINGLETON, &PocketBase::new_alloc());
+                engine.register_singleton(
+                    InputStateManager::SINGLETON,
+                    &InputStateManager::new_alloc(),
+                );
             }
             _ => (),
         }
@@ -51,6 +57,18 @@ unsafe impl ExtensionLibrary for RustExtension {
                     godot_warn!(
                         "Failed to find & free singleton -> {}",
                         PocketBase::SINGLETON
+                    );
+                }
+
+                if let Some(input_state_singleton) =
+                    engine.get_singleton(InputStateManager::SINGLETON)
+                {
+                    engine.unregister_singleton(InputStateManager::SINGLETON);
+                    input_state_singleton.free();
+                } else {
+                    godot_warn!(
+                        "Failed to find & free singleton -> {}",
+                        InputStateManager::SINGLETON
                     );
                 }
             }

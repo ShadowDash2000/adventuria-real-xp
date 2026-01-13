@@ -68,3 +68,5 @@ shape = SubResource("ConcavePolygonShape3D_o5qli")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_o5qli")
+
+[node name="InputStateManager" type="InputStateManager" parent="."]

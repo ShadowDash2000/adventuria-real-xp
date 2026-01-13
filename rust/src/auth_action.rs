@@ -1,8 +1,8 @@
-use crate::interaction::action::Action;
-use crate::pocketbase::client::PocketBase;
+use crate::interaction::Action;
+use crate::pocketbase::PocketBase;
 use godot::classes::Node;
 use godot::obj::Base;
-use godot::register::{GodotClass, godot_dyn};
+use godot::register::{godot_dyn, GodotClass};
 use godot_tokio::AsyncRuntime;
 
 #[derive(GodotClass)]
