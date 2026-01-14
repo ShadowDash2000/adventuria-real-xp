@@ -13,5 +13,9 @@ reqwest = { version = "0.13.1", default-features = false, features = ["json", "r
 rustls = { version = "0.23.36", default-features = false, features = ["ring"] }
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.149"
-tokio = { version = "1.49.0", features = ["full"] }
+tokio = { version = "1.49.0" }
 pocketbase-client = { git = "https://github.com/Tootallgavin/pocketbase-client" }
+const_env = "0.1.5"
+
+[build-dependencies]
+dotenvy = "0.15.7"

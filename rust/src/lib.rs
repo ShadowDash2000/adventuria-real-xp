@@ -1,11 +1,11 @@
-mod auth_action;
+mod auth;
 mod create_node;
 mod interaction;
 mod movable;
+mod player;
 mod pocketbase;
 mod states;
 mod test_action;
-mod player;
 
 use crate::pocketbase::PocketBase;
 use crate::states::InputStateManager;
@@ -22,10 +22,13 @@ struct RustExtension;
 unsafe impl ExtensionLibrary for RustExtension {
     fn on_level_init(level: InitLevel) {
         match level {
+            InitLevel::Servers => {
+                let mut engine = Engine::singleton();
+                engine.register_singleton(PocketBase::SINGLETON, &PocketBase::new_alloc());
+            }
             InitLevel::Scene => {
                 let mut engine = Engine::singleton();
                 engine.register_singleton(AsyncRuntime::SINGLETON, &AsyncRuntime::new_alloc());
-                engine.register_singleton(PocketBase::SINGLETON, &PocketBase::new_alloc());
                 engine.register_singleton(
                     InputStateManager::SINGLETON,
                     &InputStateManager::new_alloc(),
@@ -37,6 +40,19 @@ unsafe impl ExtensionLibrary for RustExtension {
 
     fn on_level_deinit(level: InitLevel) {
         match level {
+            InitLevel::Servers => {
+                let mut engine = Engine::singleton();
+
+                if let Some(pocketbase_singleton) = engine.get_singleton(PocketBase::SINGLETON) {
+                    engine.unregister_singleton(PocketBase::SINGLETON);
+                    pocketbase_singleton.free();
+                } else {
+                    godot_warn!(
+                        "Failed to find & free singleton -> {}",
+                        PocketBase::SINGLETON
+                    );
+                }
+            }
             InitLevel::Scene => {
                 let mut engine = Engine::singleton();
 
@@ -47,16 +63,6 @@ unsafe impl ExtensionLibrary for RustExtension {
                     godot_warn!(
                         "Failed to find & free singleton -> {}",
                         AsyncRuntime::SINGLETON
-                    );
-                }
-
-                if let Some(pocketbase_singleton) = engine.get_singleton(PocketBase::SINGLETON) {
-                    engine.unregister_singleton(PocketBase::SINGLETON);
-                    pocketbase_singleton.free();
-                } else {
-                    godot_warn!(
-                        "Failed to find & free singleton -> {}",
-                        PocketBase::SINGLETON
                     );
                 }
 
