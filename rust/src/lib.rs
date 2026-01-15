@@ -14,7 +14,6 @@ use godot::global::godot_warn;
 use godot::init::InitLevel;
 use godot::obj::{NewAlloc, Singleton};
 use godot::prelude::{gdextension, ExtensionLibrary};
-use godot_tokio::AsyncRuntime;
 
 struct RustExtension;
 
@@ -28,7 +27,6 @@ unsafe impl ExtensionLibrary for RustExtension {
             }
             InitLevel::Scene => {
                 let mut engine = Engine::singleton();
-                engine.register_singleton(AsyncRuntime::SINGLETON, &AsyncRuntime::new_alloc());
                 engine.register_singleton(
                     InputStateManager::SINGLETON,
                     &InputStateManager::new_alloc(),
@@ -55,16 +53,6 @@ unsafe impl ExtensionLibrary for RustExtension {
             }
             InitLevel::Scene => {
                 let mut engine = Engine::singleton();
-
-                if let Some(async_singleton) = engine.get_singleton(AsyncRuntime::SINGLETON) {
-                    engine.unregister_singleton(AsyncRuntime::SINGLETON);
-                    async_singleton.free();
-                } else {
-                    godot_warn!(
-                        "Failed to find & free singleton -> {}",
-                        AsyncRuntime::SINGLETON
-                    );
-                }
 
                 if let Some(input_state_singleton) =
                     engine.get_singleton(InputStateManager::SINGLETON)

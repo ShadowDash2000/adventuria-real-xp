@@ -1,7 +1,8 @@
-use crate::pocketbase::PocketBase;
+use crate::pocketbase::{PbState, PocketBase};
 use const_env::env_item;
 use godot::classes::file_access::ModeFlags;
 use godot::classes::FileAccess;
+use pocketbase_sdk::client::Client;
 
 #[env_item]
 const AUTH_FILE: &str = "auth_token";
@@ -11,38 +12,39 @@ pub const AUTH_PASS: &str = "default_pass";
 pub struct AuthAction {}
 
 impl AuthAction {
-    pub async fn auth(identifier: &str, secret: &str) -> Result<(), String> {
+    pub fn auth(identifier: &str, secret: &str) -> Result<(), String> {
         let identifier = identifier.to_string();
         let secret = secret.to_string();
 
-        let result = Self::auth_with_password(&identifier, &secret).await;
-        if result.is_err() {
-            return Err(result.unwrap_err().to_string());
-        }
-
-        let result = Self::save_auth_token(&result.unwrap());
-        if result.is_err() {
-            return Err(result.unwrap_err());
-        }
+        let result = Self::auth_with_password(&identifier, &secret)?;
+        let result = Self::save_auth_token(&result)?;
 
         Ok(())
     }
 
-    async fn auth_with_password(
-        identifier: &str,
-        secret: &str,
-    ) -> Result<String, pocketbase_client::client::AuthError> {
+    fn auth_with_password(identifier: &str, secret: &str) -> Result<String, String> {
         let client = PocketBase::client();
 
-        let response = client
-            .read()
-            .await
-            .auth_with_password("users", &identifier, &secret)
-            .await?;
+        let no_auth_client = {
+            let client = client.read().expect("Failed to read client");
+            match &*client {
+                PbState::NoAuth(client) => client.clone(),
+                PbState::Auth(client) => Client::new(&client.base_url),
+            }
+        };
 
-        let auth_token = response.auth_token.unwrap();
-        client.write().await.auth_token = Some(auth_token.clone());
-        Ok(auth_token)
+        let result = no_auth_client.auth_with_password("users", &identifier, &secret);
+        if result.is_err() {
+            return Err(result.unwrap_err().to_string());
+        }
+
+        let auth_client = result.unwrap();
+        let token = auth_client.auth_token.clone().unwrap();
+
+        let mut client = client.write().expect("Failed to write client");
+        *client = PbState::Auth(auth_client);
+
+        Ok(token)
     }
 
     fn save_auth_token(auth_token: &str) -> Result<(), String> {
